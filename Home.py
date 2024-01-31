@@ -44,6 +44,11 @@ def home_page():
         with signin_modal.container():
             email = st.text_input("Email Id")
             password = st.text_input("Password", type="password")
+            
+            login_data = {
+                "email" : email,
+                "password" : password
+            }
 
             if st.button("Login"):
                 if email == "demo" and password == "password":
@@ -69,7 +74,8 @@ def home_page():
 
             if st.button("Sign Up"):
                 save_user = requests.post("http://127.0.0.1:8000/signup", json=user_data) 
-                st.write("Output", save_user.text)
+                st.success(save_user.text)
+                signup_modal.close()
 
             
     st.header("Introduction")

@@ -2,11 +2,23 @@ from fastapi import FastAPI, HTTPException, Body
 from pydantic import BaseModel
 import asyncpg
 from datetime import datetime
+from urllib.parse import quote_plus
+import joblib
+import os
+import pickle
+import torch
+from torch import nn
 
 app = FastAPI()
 
+# with open("C:\\Users\\Jerry\\action_learning\\model\\al_agri_disease_model.pkl", "rb") as model_file:
+#     model = pickle.load(model_file)
+
 # Database configuration
-DATABASE_URL = "postgresql+asyncpg://postgres:admin@5432/plant_disease"
+my_password = "Jerry@126"
+encoded_password = quote_plus(my_password)
+db_name = "plant_disease"
+DATABASE_URL = f"postgresql://postgres:{encoded_password}@localhost/{db_name}"
 pool = None
 
 class User(BaseModel):
@@ -37,7 +49,7 @@ async def get_pool():
 
 # Endpoint for user sign-up
 @app.post('/signup')
-async def signup(user: User = Body(...)):
+async def signup(user: User):
     pool = await get_pool()
     async with pool.acquire() as connection:
         await connection.execute(
